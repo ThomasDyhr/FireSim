@@ -6,15 +6,14 @@ FireSim made by Thomas Dyhr, DTU.BYG
     Args:
         Area: List of cross-sectional areas of each reinforcement bar in the section in [mm2]
         Str: Steel strength at 20C in [MPa]
-        Xi_T: List of Degredation factors for each reinforcement bar in the section
+        Xi_T: List of Deterioration factors for half of the reinforcement bars in the section due to symmetry
     Returns:
         Fsu: Resulting strength of each reinforcement bar [kN]
 """
 
-# Add the message thingie underneath the component
 ghenv.Component.Name = 'Steel_Strength'
 ghenv.Component.NickName = 'Steel Strength'
-ghenv.Component.Message = 'Steel Strength v.0.1'
+ghenv.Component.Message = 'Steel Strength v.001'
 
 # Import classes
 import ghpythonlib.components as ghcomp
@@ -29,13 +28,12 @@ mod = ghcomp.Modulus(len(Area),2)
 
 #Extend list of degredation factors to fit the number of rebars
 if mod==0:
-    XiT=ghcomp.InsertItems(Xi_T,Xi_T,len(Xi_T))
+    XiT=ghcomp.InsertItems(Xi_T,list(reversed(Xi_T)),len(Xi_T))
 else:
     XiT=ghcomp.InsertItems(Xi_T,Xi_T,len(Xi_T))
     XiT.pop()
 
-
-Fsu = []                        #Create empty list
-for i in range(0, len(Fsu0)):
+# Multiply initial strength with degredation factor
+Fsu = []                        
+for i in range(0, len(Fsu0)):   
      Fsu.append(round(Fsu0[i]*XiT[i],2))
-
