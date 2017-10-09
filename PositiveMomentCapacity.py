@@ -6,6 +6,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
     Args:
         Fsu: Ultimate force of each reinforcement bar in the section [kN]
         Fs: Resulting force of each reinforcement bar in the section due to fire [kN]
+        εs_min: Minimum strain of the steel
         fcc: Concrete strength at 20C in [MPa]
         W: Width of cross-section [mm]
         ds: Depth of steel layer from compressed edge [mm]
@@ -17,6 +18,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
         Mstart: Positive moment capacity - Before Fire [kNm]
         Mhot: Positive moment capacity - HOT condition [kNm]
         Mcold: Positive moment capacity - COLD condition [kNm]
+        Info: Check if cross-section is over-reinforced
 """
 
 ghenv.Component.Name = 'Moment_Capacity'
@@ -42,3 +44,12 @@ Mhot = round(FsTOT*(ds-y1/2)/1000,2) #Moment
 #After Fire
 y2 = round(FsuTOT/(W*nCold*XicMCold*fcc)*1000,2) #Depth of compression zone
 Mcold = round(FsuTOT*(ds-y2/2)/1000,2) #Moment
+
+
+#Check for over-reinforced section
+εs = round((ds-(5/4)*y2)/((5/4)*y2)*(0.35/XicMCold),3)
+if εs > εs_min:
+    Info = "Cross-section is NOT over-reinforced"
+else:
+    Info = "Cross-section IS over-reinforced"
+
