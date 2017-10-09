@@ -1,5 +1,5 @@
 ﻿"""
-FireSim - Reinforcement strength in case of fire. Calculates the sectional force of reinforcement affected by higher temperatures due to fire
+FireSim - Reinforcement strength in case of fire. Calculates the sectional forces of reinforcement affected by higher temperatures due to fire
 -----
 FireSim made by Thomas Dyhr, DTU.BYG
 
@@ -8,12 +8,13 @@ FireSim made by Thomas Dyhr, DTU.BYG
         Str: Steel strength at 20C in [MPa]
         Xi_T: List of Deterioration factors for half of the reinforcement bars in the section due to symmetry
     Returns:
-        Fs: Resulting strength of each reinforcement bar [kN]
+        Fsu: Ultimate force of each reinforcement bar in the section [kN]
+        Fs: Resulting force of each reinforcement bar in the section due to fire [kN]
 """
 
 ghenv.Component.Name = 'Steel_Strength'
 ghenv.Component.NickName = 'Steel Strength'
-ghenv.Component.Message = 'Steel Strength v.001'
+ghenv.Component.Message = 'Steel Strength v.002'
 
 # Import classes
 import ghpythonlib.components as ghcomp
@@ -21,7 +22,7 @@ import ghpythonlib.components as ghcomp
 ## Calculations ##
 
 # Initial strength at 20C
-Fsu0 = [a * int(Str)/1000 for a in Area]
+Fsu = [a * int(Str)/1000 for a in Area]
 
 #Determine if there is an odd or even number of rebars (modulus=0 means even)
 mod = ghcomp.Modulus(len(Area),2)
@@ -35,5 +36,5 @@ else:
 
 # Multiply initial strength with degredation factor
 Fs = []                        
-for i in range(0, len(Fsu0)):   
-     Fs.append(round(Fsu0[i]*XiT[i],2))
+for i in range(0, len(Fsu)):   
+     Fs.append(round(Fsu[i]*XiT[i],2))
