@@ -8,7 +8,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
         Str: Steel strength at 20C in [MPa]
         Xi_T: List of Deterioration factors for half of the reinforcement bars in the section due to symmetry
     Returns:
-        Fsu: Resulting strength of each reinforcement bar [kN]
+        Fs: Resulting strength of each reinforcement bar [kN]
 """
 
 ghenv.Component.Name = 'Steel_Strength'
@@ -34,6 +34,6 @@ else:
     XiT.pop()
 
 # Multiply initial strength with degredation factor
-Fsu = []                        
+Fs = []                        
 for i in range(0, len(Fsu0)):   
-     Fsu.append(round(Fsu0[i]*XiT[i],2))
+     Fs.append(round(Fsu0[i]*XiT[i],2))
