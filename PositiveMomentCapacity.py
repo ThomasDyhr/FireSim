@@ -6,7 +6,8 @@ FireSim made by Thomas Dyhr, DTU.BYG
     Args:
         Fsu: Ultimate force of each reinforcement bar in the section [kN]
         Fsd: Design force of each reinforcement bar in the section [kN]
-        Fs: Resulting force of each reinforcement bar in the section due to fire [kN]
+        FsHOT: Resulting force of each reinforcement bar in the section due to fire - HOT condition [kN]
+        FsCOLD: Resulting force of each reinforcement bar in the section due to fire - COLD condition [kN]
         εs_min: Minimum strain of the steel
         fcc: Concrete strength at 20C in [MPa]
         W: Width of cross-section [mm]
@@ -25,16 +26,17 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Moment_Capacity'
 ghenv.Component.NickName = 'Moment Capacity'
-ghenv.Component.Message = 'Moment Capacity v.001'
+ghenv.Component.Message = 'Moment Capacity v.004'
 
 # Import classes
 import ghpythonlib.components as ghcomp
 
 ## Calculations ##
 
-FsuTOT = sum(Fsu)
 FsdTOT = sum(Fsd)
-FsTOT = sum(Fs)
+FsuTOT = sum(Fsu)
+FsHTOT = sum(FsHOT)
+FsCTOT = sum(FsCOLD)
 
 #Design values
 yd = round(FsdTOT/(W*int(fcc))*1000,2) #Depth of compression zone
@@ -45,18 +47,27 @@ y0 = round(FsuTOT/(W*int(fcc))*1000,2) #Depth of compression zone
 Mstart = round(FsuTOT*(ds-y0/2)/1000,2) #Moment
 
 #During Fire
-y1 = round(FsTOT/(W*nHot*XicMHot*int(fcc))*1000,2) #Depth of compression zone
-Mhot = round(FsTOT*(ds-y1/2)/1000,2) #Moment
+y1 = round(FsHTOT/(W*nHot*XicMHot*int(fcc))*1000,2) #Depth of compression zone
+Mhot = round(FsHTOT*(ds-y1/2)/1000,2) #Moment
 
 #After Fire
-y2 = round(FsuTOT/(W*nCold*XicMCold*int(fcc))*1000,2) #Depth of compression zone
-Mcold = round(FsuTOT*(ds-y2/2)/1000,2) #Moment
+y2 = round(FsCTOT/(W*nCold*XicMCold*int(fcc))*1000,2) #Depth of compression zone
+Mcold = round(FsCTOT*(ds-y2/2)/1000,2) #Moment
 
 
 #Check for over-reinforced section
-εs = round((ds-(5/4)*y2)/((5/4)*y2)*(0.35/XicMCold),3)
-if εs > εs_min:
-    Info = "Cross-section is NOT over-reinforced"
-else:
-    Info = "Cross-section IS over-reinforced"
+εsDES = round((ds-(5/4)*yd)/((5/4)*yd)*(0.35),3)
+εsULT = round((ds-(5/4)*y0)/((5/4)*y0)*(0.35),3)
+εsHOT = round((ds-(5/4)*y1)/((5/4)*y1)*(0.35/XicMHot),3)
+εsCOLD = round((ds-(5/4)*y2)/((5/4)*y2)*(0.35/XicMCold),3)
 
+if εsDES > εs_min and εsULT > εs_min and εsHOT > εs_min and εsCOLD > εs_min :
+    Info = "Cross-section is NOT over-reinforced in either of the: Design, Ultimate, HOT or COLD conditions"
+elif εsDES < εs_min or εsULT < εs_min or εsHOT < εs_min or εsCOLD < εs_min :
+    Info = "NB! Cross-section IS over-reinforced !!"
+
+#print εs_min
+#print εsULT
+#print εsDES
+#print εsHOT
+#print εsCOLD
