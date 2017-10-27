@@ -4,8 +4,8 @@ Shear Rebar Layout. Component that returns the settings for Shear Rebars
 FireSim made by Thomas Dyhr, DTU.BYG
 
     Args:
-        Size: Diamter of rebars [mm]
-        Spacing: Spacing of shear rebars
+        Size: Diameter of rebars [mm] - Default: 12
+        Spacing: Spacing of shear rebars - Default: 150
     Returns:
         ShearBars: Shear rebar settings for the cross-section 
 """
@@ -26,6 +26,6 @@ if not Spacing:
     Spacing = defSpacing
 
 #Output list
-MainBars = []
-MainBars.append(Size)
-MainBars.append(Spacing)
+ShearBars = []
+ShearBars.append(Size)
+ShearBars.append(Spacing)
