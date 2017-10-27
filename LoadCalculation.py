@@ -1,5 +1,5 @@
 ﻿"""
-Applied load calculation. Calculates the moment and shear capacity of a beam based on the support conditions
+Applied load calculation. Calculates the moment and shear forces in a beam based on the support conditions
 -----
 FireSim made by Thomas Dyhr, DTU.BYG
 
@@ -15,12 +15,13 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Load_Calculation'
 ghenv.Component.NickName = 'LoadCalc'
-ghenv.Component.Message = 'Load Calculation v.001'
+ghenv.Component.Message = 'Load Calculation v.002'
 
 # Import classes
 
 ## Calculations ##
 
+#Max Moment force
 if Support == 0:
     if LoadType == 0:
         M = 1/8*Loads*Lengths*Lengths
@@ -32,5 +33,17 @@ elif Support == 1:
     elif LoadType == 1:
         M = -Loads*Lengths
 
+#Max Shear force
+if Support == 0:
+    if LoadType == 0:
+        V = 1/2*Loads*Lengths
+    elif LoadType == 1:
+        V = 1/2*Loads
+elif Support == 1:
+    if LoadType == 0:
+        V = Loads*Lengths
+    elif LoadType == 1:
+        V = Loads
+
 M = round(M,2)
-#V = round(V,2)
+V = round(V,2)
