@@ -24,12 +24,11 @@ FireSim made by Thomas Dyhr, DTU.BYG
         Info: Check if cross-section is over-reinforced
 """
 
-ghenv.Component.Name = 'Moment_Capacity'
-ghenv.Component.NickName = 'Moment Capacity'
-ghenv.Component.Message = 'Moment Capacity v.004'
+ghenv.Component.Name = 'Positive_Moment_Capacity'
+ghenv.Component.NickName = 'PosMomentCapacity'
+ghenv.Component.Message = 'Positive Moment Capacity v.005'
 
 # Import classes
-import ghpythonlib.components as ghcomp
 
 ## Calculations ##
 
@@ -37,37 +36,32 @@ FsdTOT = sum(Fsd)
 FsuTOT = sum(Fsu)
 FsHTOT = sum(FsHOT)
 FsCTOT = sum(FsCOLD)
+ds = ds[0]
+
+def MomentCalc(FsTOT,W,n,Xic,fcc,ds):
+    y = round(FsTOT/(W*n*Xic*int(fcc))*1000,2) #Depth of compression zone
+    Moment = round(FsTOT*(ds-y/2)/1000,2) #Moment
+    return Moment,y
 
 #Design values
-yd = round(FsdTOT/(W*int(fcc))*1000,2) #Depth of compression zone
-Md = round(FsdTOT*(ds-yd/2)/1000,2) #Moment
+Md,yd = MomentCalc(FsdTOT,W,1,1,fcc,ds)
 
 #Start of fire
-y0 = round(FsuTOT/(W*int(fcc))*1000,2) #Depth of compression zone
-Mstart = round(FsuTOT*(ds-y0/2)/1000,2) #Moment
+Mstart,ystart = MomentCalc(FsuTOT,W,1,1,fcc,ds)
 
 #During Fire
-y1 = round(FsHTOT/(W*nHot*XicMHot*int(fcc))*1000,2) #Depth of compression zone
-Mhot = round(FsHTOT*(ds-y1/2)/1000,2) #Moment
+Mhot,yhot = MomentCalc(FsHTOT,W,nHot,XicMHot,fcc,ds)
 
 #After Fire
-y2 = round(FsCTOT/(W*nCold*XicMCold*int(fcc))*1000,2) #Depth of compression zone
-Mcold = round(FsCTOT*(ds-y2/2)/1000,2) #Moment
-
+Mcold,ycold = MomentCalc(FsCTOT,W,nCold,XicMCold,fcc,ds)
 
 #Check for over-reinforced section
 εsDES = round((ds-(5/4)*yd)/((5/4)*yd)*(0.35),3)
-εsULT = round((ds-(5/4)*y0)/((5/4)*y0)*(0.35),3)
-εsHOT = round((ds-(5/4)*y1)/((5/4)*y1)*(0.35/XicMHot),3)
-εsCOLD = round((ds-(5/4)*y2)/((5/4)*y2)*(0.35/XicMCold),3)
+εsULT = round((ds-(5/4)*ystart)/((5/4)*ystart)*(0.35),3)
+εsHOT = round((ds-(5/4)*yhot)/((5/4)*yhot)*(0.35/XicMHot),3)
+εsCOLD = round((ds-(5/4)*ycold)/((5/4)*ycold)*(0.35/XicMCold),3)
 
 if εsDES > εs_min and εsULT > εs_min and εsHOT > εs_min and εsCOLD > εs_min :
     Info = "Cross-section is NOT over-reinforced in either of the: Design, Ultimate, HOT or COLD conditions"
 elif εsDES < εs_min or εsULT < εs_min or εsHOT < εs_min or εsCOLD < εs_min :
     Info = "NB! Cross-section IS over-reinforced !!"
-
-#print εs_min
-#print εsULT
-#print εsDES
-#print εsHOT
-#print εsCOLD
