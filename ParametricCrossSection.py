@@ -18,7 +18,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'CrossSection Geometry'
 ghenv.Component.NickName = 'SectionGeometry'
-ghenv.Component.Message = 'CrossSection Geometry v.001'
+ghenv.Component.Message = 'CrossSection Geometry v.003'
 
 #Import classes
 import rhinoscriptsyntax as rs
@@ -51,12 +51,24 @@ ShearOuter = rs.OffsetCurve(ConSec, [0,0,0] , Cover)
 
 ShearInner = rs.OffsetCurve(ConSec, [0,0,0], Cover+ShearBars[0])
 
+#Creating Top bars
+explodeInner = rs.ExplodeCurves(ShearInner)
+TopLine = rs.OffsetCurve(explodeInner[2], [0,0,0], RebarsTop[0]/2)
+TopLine = rs.ExtendCurveLength(TopLine, 0, 2, -RebarsTop[0]/2)
+DivTop = rs.DivideCurve(TopLine,RebarsTop[1]-1)
+TopBars = []
+for i in range(len(DivTop)):
+    TopBars.append(rs.AddCircle(DivTop[i],RebarsTop[0]/2))
+TopLineMid = rs.CurveMidPoint(TopLine)
 
+#Creating Bot bars
+BotLine = rs.OffsetCurve(explodeInner[0], TopLineMid, RebarsBot[0]/2)
+BotLine = rs.ExtendCurveLength(BotLine, 0, 2, -RebarsBot[0]/2)
+DivBot = rs.DivideCurve(BotLine,RebarsBot[1]-1)
+BotBars = []
+for i in range(len(DivBot)):
+    BotBars.append(rs.AddCircle(DivBot[i],RebarsBot[0]/2))
 
-
-Shear = [ShearOuter[0],ShearInner[0]]
-
-#print rec
 Section = ConSec
-ShearBars = Shear
-MainBars = fill
+ShearBars = [ShearOuter[0],ShearInner[0]]
+MainBars = TopBars+BotBars
