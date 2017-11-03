@@ -26,7 +26,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Positive_Moment_Capacity'
 ghenv.Component.NickName = 'PosMomentCapacity'
-ghenv.Component.Message = 'Positive Moment Capacity v.005'
+ghenv.Component.Message = 'Positive Moment Capacity v.006'
 
 # Import classes
 
@@ -56,10 +56,14 @@ Mhot,yhot = MomentCalc(FsHTOT,W,nHot,XicMHot,fcc,ds)
 Mcold,ycold = MomentCalc(FsCTOT,W,nCold,XicMCold,fcc,ds)
 
 #Check for over-reinforced section
-εsDES = round((ds-(5/4)*yd)/((5/4)*yd)*(0.35),3)
-εsULT = round((ds-(5/4)*ystart)/((5/4)*ystart)*(0.35),3)
-εsHOT = round((ds-(5/4)*yhot)/((5/4)*yhot)*(0.35/XicMHot),3)
-εsCOLD = round((ds-(5/4)*ycold)/((5/4)*ycold)*(0.35/XicMCold),3)
+def StrainCheck(ds,y,XicM):
+    strain = round((ds-(5/4)*y)/((5/4)*y)*(0.35/XicM),3)
+    return strain
+
+εsDES = StrainCheck(ds,yd,1)
+εsULT = StrainCheck(ds,ystart,1)
+εsHOT = StrainCheck(ds,yhot,XicMHot)
+εsCOLD = StrainCheck(ds,ycold,XicMHot)
 
 if εsDES > εs_min and εsULT > εs_min and εsHOT > εs_min and εsCOLD > εs_min :
     Info = "Cross-section is NOT over-reinforced in either of the: Design, Ultimate, HOT or COLD conditions"
