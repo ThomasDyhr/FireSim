@@ -39,12 +39,24 @@ ConSec = rs.AddRectangle( (-Width/2,0,0) , Width, Height)
 
 #Offsets for shear rebar position
 ShearOuter = rs.OffsetCurve(ConSec, [0,0,0] , Cover)
-#explode = rs.ExplodeCurves(Off1)
+#explode = rs.ExplodeCurves(ShearOuter)
+#radius = 20
+#fill = rs.CurveFilletPoints(explode[0],explode[1],radius)
+#fillet1 = rs.AddFilletCurve(explode[0],explode[1],radius)
+#fillet2 = rs.AddFilletCurve(explode[1],explode[2],radius)
+#fillet3 = rs.AddFilletCurve(explode[2],explode[3],radius)
+#fillet4 = rs.AddFilletCurve(explode[3],explode[0],radius)
+#fillet = [fillet1,fillet2,fillet3,fillet4]
+
 
 ShearInner = rs.OffsetCurve(ConSec, [0,0,0], Cover+ShearBars[0])
+
+
+
 
 Shear = [ShearOuter[0],ShearInner[0]]
 
 #print rec
 Section = ConSec
 ShearBars = Shear
+MainBars = fill
