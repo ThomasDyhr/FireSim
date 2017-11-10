@@ -26,9 +26,36 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Negative_Moment_Capacity'
 ghenv.Component.NickName = 'NegMomentCapacity'
-ghenv.Component.Message = 'Negative Moment Capacity v.001'
+ghenv.Component.Message = 'Negative Moment Capacity v.002'
 
 # Import classes
+
+# Defaults
+deffcc=30
+defW=250
+defXicMHot=1
+defXicMCold=1
+defnHot=1
+defnCold=1
+defy=1
+
+if not fcc:
+    fcc = deffcc
+if not W:
+    W = defW
+if not XicMHot:
+    XicMHot = defXicMHot
+if not XicMCold:
+    XicMCold = defXicMCold
+if not nHot:
+    nHot = defnHot
+if not nCold:
+    nCold = defnCold
+
+if ds:
+    ds = ds[1]
+else:
+    ds = 1
 
 ## Calculations ##
 
@@ -36,7 +63,6 @@ FsdTOT = sum(Fsd)
 FsuTOT = sum(Fsu)
 FsHTOT = sum(FsHOT)
 FsCTOT = sum(FsCOLD)
-ds = ds[1]
 
 def MomentCalc(FsTOT,W,n,XicM,fcc,ds):
     y = round(FsTOT/(W*n*XicM*int(fcc))*1000,2) #Depth of compression zone
@@ -57,6 +83,8 @@ Mcold,ycold = MomentCalc(FsCTOT,W,nCold,XicMCold,fcc,ds)
 
 #Check for over-reinforced section
 def StrainCheck(ds,W,n,y,XicM):
+    if not y:
+        y = defy
     strain = round((ds-(W/2)*(1-n)-(5/4)*y)/((5/4)*y)*(0.35/XicM),3)
     return strain
 
