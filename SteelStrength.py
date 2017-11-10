@@ -4,9 +4,9 @@ Reinforcement strength in case of fire. Calculates the sectional forces of reinf
 FireSim made by Thomas Dyhr, DTU.BYG
 
     Args:
-        A: List of cross-sectional areas of each reinforcement bar in the section in [mm2]
-        fyk: Characteristic steel strength at 20C in [MPa]
-        Es: Steel E-modulus at 20C in [GPa]
+        A: List of cross-sectional areas of each reinforcement bar in the section [mm2]
+        fyk: Characteristic steel strength at 20C in [MPa] - Default: 550
+        Es: Steel E-modulus at 20C in [GPa] - Default: 210
         γm: Partial factor
         ξsHOT: List of Deterioration factors for half of the reinforcement bars in the section due to symmetry - HOT condition
         ξsCOLD: List of Deterioration factors for half of the reinforcement bars in the section due to symmetry - COLD condition
@@ -18,12 +18,21 @@ FireSim made by Thomas Dyhr, DTU.BYG
         εs_min: Minimum strain of the steel
 """
 
-ghenv.Component.Name = 'Steel_Strength'
-ghenv.Component.NickName = 'Steel Strength'
-ghenv.Component.Message = 'Steel Strength v.007'
+ghenv.Component.Name = 'Steel Strength'
+ghenv.Component.NickName = 'SteelStr'
+ghenv.Component.Message = 'Steel Strength v.008'
 
 # Import classes
 import ghpythonlib.components as ghcomp
+
+# Defaults
+deffyk=550
+defEs=210
+
+if not fyk:
+    fyk = deffyk
+if not Es:
+    Es = defEs
 
 ## Calculations ##
 
