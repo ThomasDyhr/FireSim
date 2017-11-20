@@ -4,25 +4,25 @@ Cross-section geometry. Returns the geometry of the cross-section based on input
 FireSim made by Thomas Dyhr, DTU.BYG
 
     Args:
-        Width: Widht of cross-section [mm]
-        Height: Height of cross-section [mm]
-        RebarsTop: Input settings for rebars in "top" of cross-section
-        RebarsBot: Input settings for rebars in "bot" of cross-section
-        ShearBars: Input settings for shear rebars in cross-section
-        Cover: Cover thickness [mm] (From concrete edge to shear rebar's outer edge) 
+        Width: Widht of cross-section [mm] - Default: 250
+        Height: Height of cross-section [mm] - Default: 500
+        RebarsTop: Input settings for rebars in "top" of cross-section - Default: [16,4]
+        RebarsBot: Input settings for rebars in "bot" of cross-section - Default: [16,4]
+        ShearBars: Input settings for shear rebars in cross-section - Default: [10,100]
+        Cover: Cover thickness [mm] (From concrete edge to shear rebar's outer edge) - Default: 40 
     Returns:
         Section: Conctains a list of curves that determines the cross-section geometry
         AreaTop: Area of each rebar in the top layer [mm2]
         xyTop: Local xy-coordinates of half of the rebars in top of the cross-section (Due to symmetry)
         dsTop: Distance from bot edge to center of top rebars [mm]
         AreaBot: Area of each rebar in the bottom layer [mm2]
-        xyBot: Local xy-coordinates of half of the rebars in top of the cross-section (Due to symmetry)
+        xyBot: Local xy-coordinates of half of the rebars in bottom of the cross-section (Due to symmetry)
         dsBot: Distance from top edge to center of bottom rebars [mm]
 """
 
-ghenv.Component.Name = 'CrossSection Geometry'
-ghenv.Component.NickName = 'SectionGeometry'
-ghenv.Component.Message = 'CrossSection Geometry v.005'
+ghenv.Component.Name = 'Define Cross-Section Geometry'
+ghenv.Component.NickName = 'DefSectionGeo'
+ghenv.Component.Message = 'Define Cross-Section Geometry v.006'
 
 #Import classes
 import rhinoscriptsyntax as rs
@@ -32,11 +32,23 @@ import rhinoscriptsyntax as rs
 #Defaults
 defWidth = 250
 defHeight = 500
+defRebarsTop = [16,4]
+defRebarsBot = [16,4]
+defShearBars = [10,100]
+defCover = 40
 
-#if not Size:
-#    Size = defSize
-#if not Number:
-#    Number = defNumber
+if not Width:
+    Width = defWidth
+if not Height:
+    Height = defHeight
+if not RebarsTop:
+    RebarsTop = defRebarsTop
+if not RebarsBot:
+    RebarsBot = defRebarsBot
+if not ShearBars:
+    ShearBars = defShearBars
+if not Cover:
+    Cover = defCover
 
 def Geo(Width,Height,RebarsTop,RebarsBot,ShearBars,Cover):
     #Create concrete section
