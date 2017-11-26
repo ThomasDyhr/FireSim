@@ -19,7 +19,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Temperature Calculation'
 ghenv.Component.NickName = 'TempCalc'
-ghenv.Component.Message = 'Temperature Calculation v.004'
+ghenv.Component.Message = 'Temperature Calculation v.005'
 
 #Import classes
 from math import log10, exp, pi, sqrt, sin
@@ -30,13 +30,17 @@ cp = 1000
 Lambda = 0.75
 k = sqrt((pi*rho*cp)/(750*Lambda*t))
 
-def TempCalc(t,k,xy):
-    Temp = 312*log10(8*t+1)*exp(-1.9*k*(xy/1000))*sin((pi/2)-k*(xy/1000))
+def TempCalc(t,k,x):
+    Temp = 312*log10(8*t+1)*exp(-1.9*k*(x/1000))*sin((pi/2)-k*(x/1000))
     return Temp
 
-def TempCalc2(t,k,xy):
-    Temp2 = ((TempCalc(t,k,xy)+TempCalc(t,k,W-xy))*(TempCalc(t,k,0)/(TempCalc(t,k,0)+TempCalc(t,k,W))))
+def TempCalc2(t,k,x):
+    Temp2 = ((TempCalc(t,k,x)+TempCalc(t,k,W-x))*(TempCalc(t,k,0)/(TempCalc(t,k,0)+TempCalc(t,k,W))))
     return Temp2
+
+def TempCalc3(t,k,x,y):
+    Temp3 = TempCalc2(t,k,x)+TempCalc(t,k,y)-((TempCalc2(t,k,x)*TempCalc(t,k,y))/TempCalc(t,k,0))
+    return Temp3
 
 if t<1:
     Txy=20
@@ -77,3 +81,28 @@ else:
             if Temp < 20:
                 Temp = 20
             Tmm.append(Temp)
+
+# Calculation for 3 sides exposed
+    elif Sides == 3:
+        for i in range(len(x)):
+            Txy.append(round( TempCalc3(t,k,x[i],y[i]) ,2))
+        # Temperatue at middle of cross-section
+        TM = round( TempCalc3(t,k,W/2,H/2)  ,2)
+        # If temperature is lower than 0 it is set to 0 !!
+        if TM < 20:
+            TM = 20
+        # Temperatue at each mm of the cross-section
+        n = 10 # Number of sections
+        for i in range(1,n*2,2):
+            P = W/n/2*i
+            
+            print P
+            """
+            for j in range(0,n):
+                Temp = round( TempCalc3(t,k,i,j)   ,2) 
+                # If temperature is lower than 0 it is set to 0 !!
+                if Temp < 20:
+                    Temp = 20
+                Tmm.append(Temp)
+                """
+
