@@ -20,7 +20,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Temperature Calculation'
 ghenv.Component.NickName = 'TempCalc'
-ghenv.Component.Message = 'Temperature Calculation v.007'
+ghenv.Component.Message = 'Temperature Calculation v.008'
 
 #Import classes
 from math import log10, exp, pi, sqrt, sin
@@ -56,8 +56,9 @@ def TempCalc4(t,k,x,y):
 
 
 if t<1:
-    Txy=20
+    Txy = [20 for i in y]
     TM=20
+    Tmm = [20 for i in range(0,n)]
 else:
     Txy = []
     Tmm = []
@@ -69,16 +70,10 @@ else:
             Txy.append(round(TempCalc(t,k,y[i]),2))
         # Temperatue at middle of cross-section
         TM = round(TempCalc(t,k,H/2),2)
-        # If temperature is lower than 0 it is set to 0 !!
-        if TM < 20:
-            TM = 20
         # Temperatue in middle of each lamella
         for i in range(1,n*2,2):
             Y = H/n/2*i
             Temp = round(TempCalc(t,k,Y),2) 
-            # If temperature is lower than 0 it is set to 0 !!
-            if Temp < 20:
-                Temp = 20
             Tmm.append(Temp)
 
 # Calculation for 1 side exposure
@@ -87,16 +82,10 @@ else:
             Txy.append(round(TempCalc(t,k,x[i]),2))
         # Temperatue at middle of cross-section
         TM = round(TempCalc(t,k,W/2),2)
-        # If temperature is lower than 0 it is set to 0 !!
-        if TM < 20:
-            TM = 20
         # Temperatue in middle of each lamella
         for i in range(1,n*2,2):
             X = W/n/2*i
             Temp = round(TempCalc(t,k,X),2) 
-            # If temperature is lower than 0 it is set to 0 !!
-            if Temp < 20:
-                Temp = 20
             Tmm.append(Temp)
 
 # Calculation for 2 parallel sides exposed
@@ -104,17 +93,11 @@ else:
         for i in range(len(x)):
             Txy.append(round( TempCalc2X(t,k,x[i]) ,2))
         # Temperatue at middle of cross-section
-        TM = round( TempCalc2X(t,k,W/2)  ,2)
-        # If temperature is lower than 0 it is set to 0 !!
-        if TM < 20:
-            TM = 20
+        TM = round( TempCalc2X(t,k,W/2) ,2)
         # Temperatue in middle of each lamella
         for i in range(1,n*2,2):
             X = W/n/2*i
-            Temp = round( TempCalc2X(t,k,X)   ,2) 
-            # If temperature is lower than 0 it is set to 0 !!
-            if Temp < 20:
-                Temp = 20
+            Temp = round( TempCalc2X(t,k,X) ,2) 
             Tmm.append(Temp)
 
 # Calculation for 1 side + bottom exposed
@@ -123,18 +106,12 @@ else:
             Txy.append(round( TempCalc25(t,k,x[i],y[i]) ,2))
         # Temperatue at middle of cross-section
         TM = round( TempCalc25(t,k,W/2,H/2)  ,2)
-        # If temperature is lower than 0 it is set to 0 !!
-        if TM < 20:
-            TM = 20
         # Temperatue in middle of each lamella
         for i in range(1,n*2,2):
             X = W/n/2*i
             for j in range(1,n*2,2):
                 Y = H/n/2*j
                 Temp = round( TempCalc25(t,k,X,Y) ,2)
-                # If temperature is lower than 0 it is set to 0 !!
-                if Temp < 20:
-                    Temp = 20
                 Tmm.append(Temp)
 
 # Calculation for 3 sides exposed
@@ -143,18 +120,12 @@ else:
             Txy.append(round( TempCalc3(t,k,x[i],y[i]) ,2))
         # Temperatue at middle of cross-section
         TM = round( TempCalc3(t,k,W/2,H/2)  ,2)
-        # If temperature is lower than 0 it is set to 0 !!
-        if TM < 20:
-            TM = 20
         # Temperatue in middle of each lamella
         for i in range(1,n*2,2):
             X = W/n/2*i
             for j in range(1,n*2,2):
                 Y = H/n/2*j
                 Temp = round( TempCalc3(t,k,X,Y) ,2)
-                # If temperature is lower than 0 it is set to 0 !!
-                if Temp < 20:
-                    Temp = 20
                 Tmm.append(Temp)
 
 # Calculation for 4 sides exposed
@@ -163,16 +134,16 @@ else:
             Txy.append(round( TempCalc4(t,k,x[i],y[i]) ,2))
         # Temperatue at middle of cross-section
         TM = round( TempCalc4(t,k,W/2,H/2)  ,2)
-        # If temperature is lower than 0 it is set to 0 !!
-        if TM < 20:
-            TM = 20
         # Temperatue in middle of each lamella
         for i in range(1,n*2,2):
             X = W/n/2*i
             for j in range(1,n*2,2):
                 Y = H/n/2*j
                 Temp = round( TempCalc4(t,k,X,Y) ,2)
-                # If temperature is lower than 0 it is set to 0 !!
-                if Temp < 20:
-                    Temp = 20
                 Tmm.append(Temp)
+
+# Replacing all temperatures below 20°C with 20°C
+Txy[:] = [20 if i<20 else i for i in Txy]
+if TM < 20:
+    TM = 20
+Tmm[:] = [20 if i<20 else i for i in Tmm]
