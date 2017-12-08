@@ -22,7 +22,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Define Cross-Section Geometry'
 ghenv.Component.NickName = 'DefSectionGeo'
-ghenv.Component.Message = 'Define Cross-Section Geometry v.006'
+ghenv.Component.Message = 'Define Cross-Section Geometry v.007'
 
 #Import classes
 import rhinoscriptsyntax as rs
@@ -110,7 +110,7 @@ def Geo(Width,Height,RebarsTop,RebarsBot,ShearBars,Cover):
     
     xyTop = []
     DivTop.reverse()
-    for i in range(int(round(len(DivTop)/2))):
+    for i in range(int(round(len(DivTop)))):
         xyTop.append(DivTop[i])
     
     AreaBot = []
@@ -118,7 +118,7 @@ def Geo(Width,Height,RebarsTop,RebarsBot,ShearBars,Cover):
         AreaBot.append(int(rs.Area(i)))
     
     xyBot = []
-    for i in range(int(round(len(DivBot)/2))):
+    for i in range(int(round(len(DivBot)))):
         xyBot.append(DivBot[i])
     
     return Section,AreaTop,xyTop,dsTop,AreaBot,xyBot,dsBot
