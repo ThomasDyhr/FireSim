@@ -6,16 +6,16 @@ FireSim made by Thomas Dyhr, DTU.BYG
     Args:
         Fsu: Ultimate force of each reinforcement bar in the section [kN]
         Fsd: Design force of each reinforcement bar in the section [kN]
-        FsHOT: Resulting force of each reinforcement bar in the section due to fire - HOT condition [kN]
-        FsCOLD: Resulting force of each reinforcement bar in the section due to fire - COLD condition [kN]
+        FsHot: Resulting force of each reinforcement bar in the section due to fire - HOT condition [kN]
+        FsCold: Resulting force of each reinforcement bar in the section due to fire - COLD condition [kN]
         εs_min: Minimum strain of the steel
-        fcc: Concrete strength at 20C in [MPa]
-        W: Width of cross-section [mm]
+        fcc: Concrete strength at 20C in [MPa] - Default: 30
+        W: Width of cross-section [mm] - Default: 250
         ds: Depth of steel layer from compressed edge [mm]
-        XicMHot: Deterioration factor of concrete in mid section - HOT condition
-        XicMCold: Deterioration factor of concrete in mid section - COLD condition
-        nHot: Stress Distribution Factor - HOT condition
-        nCold: Stress Distribution Factor - COLD condition
+        ξcMHot: Deterioration factor of concrete in mid section - HOT condition
+        ξcMCold: Deterioration factor of concrete in mid section - COLD condition
+        ηHot: Stress Distribution Factor - HOT condition
+        ηCold: Stress Distribution Factor - COLD condition
     Returns:
         Md: Positive moment capacity - Design Value [kNm]
         Mstart: Positive moment capacity - Start of Fire [kNm]
@@ -24,45 +24,43 @@ FireSim made by Thomas Dyhr, DTU.BYG
         Info: Check if cross-section is over-reinforced
 """
 
-ghenv.Component.Name = 'Negative_Moment_Capacity'
+ghenv.Component.Name = 'Negative Moment Capacity'
 ghenv.Component.NickName = 'NegMomentCapacity'
-ghenv.Component.Message = 'Negative Moment Capacity v.002'
+ghenv.Component.Message = 'Negative Moment Capacity v. 1.0'
 
 # Import classes
 
 # Defaults
 deffcc=30
 defW=250
-defXicMHot=1
-defXicMCold=1
-defnHot=1
-defnCold=1
+defξcMHot=1
+defξcMCold=1
+defηHot=1
+defηCold=1
 defy=1
+defds=1
 
 if not fcc:
     fcc = deffcc
 if not W:
     W = defW
-if not XicMHot:
-    XicMHot = defXicMHot
-if not XicMCold:
-    XicMCold = defXicMCold
-if not nHot:
-    nHot = defnHot
-if not nCold:
-    nCold = defnCold
-
-if ds:
-    ds = ds[1]
-else:
-    ds = 1
+if not ξcMHot:
+    ξcMHot = defξcMHot
+if not ξcMCold:
+    ξcMCold = defξcMCold
+if not ηHot:
+    ηHot = defηHot
+if not ηCold:
+    ηCold = defηCold
+if not ds:
+    ds = defds
 
 ## Calculations ##
 
 FsdTOT = sum(Fsd)
 FsuTOT = sum(Fsu)
-FsHTOT = sum(FsHOT)
-FsCTOT = sum(FsCOLD)
+FsHTOT = sum(FsHot)
+FsCTOT = sum(FsCold)
 
 def MomentCalc(FsTOT,W,n,XicM,fcc,ds):
     y = round(FsTOT/(W*n*XicM*int(fcc))*1000,2) #Depth of compression zone
@@ -76,10 +74,10 @@ Md,yd = MomentCalc(FsdTOT,W,1,1,fcc,ds)
 Mstart,ystart = MomentCalc(FsuTOT,W,1,1,fcc,ds)
 
 #During Fire
-Mhot,yhot = MomentCalc(FsHTOT,W,nHot,XicMHot,fcc,ds)
+Mhot,yhot = MomentCalc(FsHTOT,W,ηHot,ξcMHot,fcc,ds)
 
 #After Fire
-Mcold,ycold = MomentCalc(FsCTOT,W,nCold,XicMCold,fcc,ds)
+Mcold,ycold = MomentCalc(FsCTOT,W,ηCold,ξcMCold,fcc,ds)
 
 #Check for over-reinforced section
 def StrainCheck(ds,W,n,y,XicM):
@@ -90,8 +88,8 @@ def StrainCheck(ds,W,n,y,XicM):
 
 εsDES = StrainCheck(ds,W,1,yd,1)
 εsULT = StrainCheck(ds,W,1,ystart,1)
-εsHOT = StrainCheck(ds,W,nHot,yhot,XicMHot)
-εsCOLD = StrainCheck(ds,W,nCold,ycold,XicMHot)
+εsHOT = StrainCheck(ds,W,ηHot,yhot,ξcMHot)
+εsCOLD = StrainCheck(ds,W,ηCold,ycold,ξcMHot)
 
 if εsDES > εs_min and εsULT > εs_min and εsHOT > εs_min and εsCOLD > εs_min :
     Info = "Cross-section is NOT over-reinforced in either of the: Design, Ultimate, HOT or COLD conditions"
