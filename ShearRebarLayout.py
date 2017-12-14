@@ -1,18 +1,18 @@
 ﻿"""
-Shear Rebar Layout. Component that returns the settings for Shear Rebars
+Stirrup Layout. Component that returns the settings for stirrups
 -----
 FireSim made by Thomas Dyhr, DTU.BYG
 
     Args:
-        Size: Diameter of rebars [mm] - Default: 12
-        Spacing: Spacing of shear rebars - Default: 150
+        Size: Diameter of stirrups [mm] - Default: 12
+        Spacing: Spacing of stirrups - Default: 150
     Returns:
-        ShearBars: Shear rebar settings for the cross-section 
+        Stirrups: Stirrup settings for the cross-section 
 """
 
-ghenv.Component.Name = 'Shear Reinforcement'
-ghenv.Component.NickName = 'ShearRebars'
-ghenv.Component.Message = 'Shear Reinforcement v.001'
+ghenv.Component.Name = 'Stirrup Reinforcement'
+ghenv.Component.NickName = 'Stirrups'
+ghenv.Component.Message = 'Stirrup Reinforcement v. 1.0'
 
 ## Code ##
 
@@ -26,6 +26,6 @@ if not Spacing:
     Spacing = defSpacing
 
 #Output list
-ShearBars = []
-ShearBars.append(Size)
-ShearBars.append(Spacing)
+Stirrups = []
+Stirrups.append(Size)
+Stirrups.append(Spacing)
