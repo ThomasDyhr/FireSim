@@ -8,8 +8,8 @@ FireSim made by Thomas Dyhr, DTU.BYG
         fyk: Characteristic steel strength at 20C in [MPa] - Default: 550
         Es: Steel E-modulus at 20C in [GPa] - Default: 210
         γm: Partial factor
-        ξsHot: List of Deterioration factors - HOT condition
-        ξsCold: List of Deterioration factors - COLD condition
+        ξsHot: List of Deterioration factors for half of the reinforcement bars in the section due to symmetry - HOT condition
+        ξsCold: List of Deterioration factors for half of the reinforcement bars in the section due to symmetry - COLD condition
     Returns:
         Fsu: Ultimate force of each reinforcement bar in the section [kN]
         Fsd: Design force of each reinforcement bar in the section [kN]
@@ -20,7 +20,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Steel Strength'
 ghenv.Component.NickName = 'SteelStr'
-ghenv.Component.Message = 'Steel Strength v.009'
+ghenv.Component.Message = 'Steel Strength v. 1.0'
 
 # Import classes
 import ghpythonlib.components as ghcomp
@@ -45,12 +45,22 @@ Fsd = [a * int(fyk)/1000/float(γm) for a in A]
 #Determine if there is an odd or even number of rebars (modulus=0 means even)
 mod = ghcomp.Modulus(len(A),2)
 
+#Extend list of degredation factors to fit the number of rebars
+if mod==0:
+    XiHOT=ghcomp.InsertItems(ξsHot,list(reversed(ξsHot)),len(ξsHot))
+    XiCOLD=ghcomp.InsertItems(ξsCold,list(reversed(ξsCold)),len(ξsCold))
+else:
+    XiHOT=ghcomp.InsertItems(ξsHot,ξsHot,len(ξsHot))
+    XiHOT.pop()
+    XiCOLD=ghcomp.InsertItems(ξsCold,ξsCold,len(ξsCold))
+    XiCOLD.pop()
+
 # Multiply initial strength with degredation factor
 FsHot = []
 FsCold = []
 for i in range(0, len(Fsu)):   
-     FsHot.append(round(Fsu[i]*ξsHot[i],2))
-     FsCold.append(round(Fsu[i]*ξsCold[i],2))
+     FsHot.append(round(Fsu[i]*XiHOT[i],2))
+     FsCold.append(round(Fsu[i]*XiCOLD[i],2))
 
 #Minimum strain of steel
 εs_min = round(fyk/(Es*1000)*100+0.2,3)
