@@ -20,7 +20,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
 
 ghenv.Component.Name = 'Temperature Calculation'
 ghenv.Component.NickName = 'TempCalc'
-ghenv.Component.Message = 'Temperature Calculation v.008'
+ghenv.Component.Message = 'Temperature Calculation v. 1.0'
 
 #Import classes
 from math import log10, exp, pi, sqrt, sin
