@@ -8,7 +8,7 @@ FireSim made by Thomas Dyhr, DTU.BYG
         Height: Height of cross-section [mm] - Default: 500
         RebarsTop: Input settings for rebars in "top" of cross-section - Default: [16,4]
         RebarsBot: Input settings for rebars in "bot" of cross-section - Default: [16,4]
-        ShearBars: Input settings for shear rebars in cross-section - Default: [10,100]
+        Stirrups: Input settings for stirrups in cross-section - Default: [10,100]
         Cover: Cover thickness [mm] (From concrete edge to shear rebar's outer edge) - Default: 40 
     Returns:
         Section: Conctains a list of curves that determines the cross-section geometry
@@ -21,8 +21,8 @@ FireSim made by Thomas Dyhr, DTU.BYG
 """
 
 ghenv.Component.Name = 'Define Cross-Section Geometry'
-ghenv.Component.NickName = 'DefSectionGeo'
-ghenv.Component.Message = 'Define Cross-Section Geometry v.007'
+ghenv.Component.NickName = 'DefineSection'
+ghenv.Component.Message = 'Define Cross-Section Geometry v. 1.0'
 
 #Import classes
 import rhinoscriptsyntax as rs
@@ -34,7 +34,7 @@ defWidth = 250
 defHeight = 500
 defRebarsTop = [16,4]
 defRebarsBot = [16,4]
-defShearBars = [10,100]
+defStirrups = [10,100]
 defCover = 40
 
 if not Width:
@@ -45,12 +45,12 @@ if not RebarsTop:
     RebarsTop = defRebarsTop
 if not RebarsBot:
     RebarsBot = defRebarsBot
-if not ShearBars:
-    ShearBars = defShearBars
+if not Stirrups:
+    Stirrups = defStirrups
 if not Cover:
     Cover = defCover
 
-def Geo(Width,Height,RebarsTop,RebarsBot,ShearBars,Cover):
+def Geo(Width,Height,RebarsTop,RebarsBot,Stirrups,Cover):
     #Create concrete section
     ConSec = rs.AddRectangle( (0,0,0) , Width, Height)
     explodeSec = rs.ExplodeCurves(ConSec)
@@ -69,7 +69,7 @@ def Geo(Width,Height,RebarsTop,RebarsBot,ShearBars,Cover):
     #fillet4 = rs.AddFilletCurve(explode[3],explode[0],radius)
     #fillet = [fillet1,fillet2,fillet3,fillet4]
     
-    ShearInner = rs.OffsetCurve(ConSec, TopEdgeMid, Cover+ShearBars[0])
+    ShearInner = rs.OffsetCurve(ConSec, TopEdgeMid, Cover+Stirrups[0])
     
     explodeInner = rs.ExplodeCurves(ShearInner)
     
@@ -123,4 +123,4 @@ def Geo(Width,Height,RebarsTop,RebarsBot,ShearBars,Cover):
     
     return Section,AreaTop,xyTop,dsTop,AreaBot,xyBot,dsBot
 
-Section,AreaTop,xyTop,dsTop,AreaBot,xyBot,dsBot = Geo(Width,Height,RebarsTop,RebarsBot,ShearBars,Cover)
+Section,AreaTop,xyTop,dsTop,AreaBot,xyBot,dsBot = Geo(Width,Height,RebarsTop,RebarsBot,Stirrups,Cover)
