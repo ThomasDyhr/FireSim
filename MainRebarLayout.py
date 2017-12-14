@@ -4,15 +4,15 @@ Main Rebar Layout. Component that returns the settings for Main Rebars
 FireSim made by Thomas Dyhr, DTU.BYG
 
     Args:
-        Size: Diamter of main rebars [mm]
-        Number: Number of main rebars
+        Size: Diamter of main rebars [mm] - Default: 16
+        Number: Number of main rebars - Default: 4
     Returns:
         MainBars: Main rebar settings for the cross-section 
 """
 
 ghenv.Component.Name = 'Main Reinforcement'
 ghenv.Component.NickName = 'MainRebars'
-ghenv.Component.Message = 'Main Reinforcement v.001'
+ghenv.Component.Message = 'Main Reinforcement v. 1.0'
 
 ## Code ##
 
